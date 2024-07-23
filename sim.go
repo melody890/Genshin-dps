@@ -2,21 +2,13 @@ package main
 
 import (
 	"dps/src/characters"
+	"dps/src/characters/bennett"
 	character2 "dps/src/core/character"
+	"dps/src/core/combat"
 	"dps/src/core/player"
 	character3 "dps/src/core/player/character"
 	"fmt"
 )
-
-type Charcfg struct {
-	Characters     []string
-	Weapons        []string
-	Artifacts      []string
-	CharacterLevel int
-	WeaponLevel    int
-	ArtifactLevel  []int
-	TalentLevel    [][3]int
-}
 
 type Actions struct {
 	Characters []string
@@ -31,26 +23,29 @@ type CharacterInfo struct {
 func Readactions() Actions {
 	action := Actions{
 		Characters: []string{"bennett"},
-		actions:    [][]string{{"1", "ActionSkill"}},
+		actions:    [][]string{{"bennett", "ActionSkill"}},
 	}
 	return action
 }
 
-func Readcfg() Charcfg {
-	cfg := Charcfg{
+func Readcfg() character2.Charcfg {
+	cfg := character2.Charcfg{
 		Characters:     []string{"bennett"},
 		Weapons:        []string{"mistsplitter"},
 		Artifacts:      []string{"Artifact1", "Artifact2", "Artifact1", "Artifact1", "Artifact1"},
 		CharacterLevel: 10,
 		WeaponLevel:    5,
-		ArtifactLevel:  []int{3, 4},
-		TalentLevel:    [][3]int{{1, 2, 2}, {1, 1, 1}, {1, 1, 1}},
+		ArtifactLevel:  []int{20, 20, 20, 20, 20},
+		TalentLevel:    [][3]int{{1, 2, 2}},
 	}
 	return cfg
 }
 
-func FindActionQueue(actions Actions) {
+func Actionqueue(actions Actions, cfg character2.Charcfg) []combat.AttackInfo {
 	var charbaseinfo []CharacterInfo // 初始化一个 CharacterInfo 的切片，存储各个角色的初始信息
+	//var enemy enemies.Enemies        //初始化怪物结构体
+
+	// 读出角色三围
 	for _, charName := range actions.Characters {
 		char, breakthrough, err := characters.InitCharacter(charName)
 		if err != nil {
@@ -59,25 +54,39 @@ func FindActionQueue(actions Actions) {
 		}
 		charbaseinfo = append(charbaseinfo, CharacterInfo{Char: char, Breakthrough: breakthrough})
 	}
+
+	// 读出角色动作列表，总结所有攻击信息
+	AllAttackInfo := make([]combat.AttackInfo, 0)
 	for _, ActionContext := range actions.actions {
-		CharIndex := ActionContext[0]
+		CharName := ActionContext[0]
 		ActionName := ActionContext[1]
-		switch ActionName {
-		case "ActionSkill":
-			player.UseAbility(character3.Character.Skill)
+		var c character3.Character
+
+		switch CharName {
+		case "bennett":
+			bennettChar := &bennett.Char{}
+			bennettChar.InitChar(CharName) // 初始化 Char 实例.初始化三围。
+			c = bennettChar
 		}
-
-		fmt.Println(CharIndex, ActionName)
+		ai := player.UseAbility(c, ActionName, cfg)
+		AllAttackInfo = append(AllAttackInfo, ai)
+		//fmt.Println(ai)
+		//fmt.Println(CharName, ActionName)
 	}
+	return AllAttackInfo
+}
 
+func CalcByFrame(info []combat.AttackInfo) {
+	fmt.Println(info[0])
 }
 
 func main() {
 	fmt.Println("读入配置")
 	cfg := Readcfg()
-	fmt.Println(cfg)
+	fmt.Println("角色配置：", cfg)
 	fmt.Println("读入动作序列")
 	actions := Readactions()
-	fmt.Println(actions)
-	FindActionQueue(actions)
+	fmt.Println("动作序列：", actions)
+	AllAttackInfo := Actionqueue(actions, cfg)
+	CalcByFrame(AllAttackInfo)
 }

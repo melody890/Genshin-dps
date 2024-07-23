@@ -6,9 +6,9 @@ import (
 )
 
 type AttackInfo struct {
-	ActorIndex       int                // character this attack belongs to
+	ActorName        string             // 释放攻击角色名
 	Abil             string             // name of ability triggering the damage
-	PoiseDMG         float64            // only needed on blunt attacks for frozen consumption before shatter for now
+	PoiseDMG         float64            // 目前仅在冰冻状态下的钝器攻击中需要，以在破碎之前消耗冰冻效果
 	Element          attributes.Element // element of ability
 	NoImpulse        bool
 	HitWeakPoint     bool

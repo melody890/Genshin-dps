@@ -2,6 +2,16 @@ package character
 
 import "dps/src/core/attribute"
 
+type Charcfg struct {
+	Characters     []string
+	Weapons        []string
+	Artifacts      []string
+	CharacterLevel int
+	WeaponLevel    int
+	ArtifactLevel  []int
+	TalentLevel    [][3]int
+}
+
 type Char struct {
 	Name          string
 	Constellation int
