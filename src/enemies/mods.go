@@ -1,0 +1,5 @@
+package enemy
+
+// Add.
+
+// Amount.

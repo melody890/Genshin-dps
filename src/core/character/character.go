@@ -1,15 +1,22 @@
 package character
 
-import "dps/src/core/attribute"
+import (
+	"dps/src/core/attribute"
+	"dps/src/core/attributes"
+)
 
 type Charcfg struct {
-	Characters     []string
-	Weapons        []string
-	Artifacts      []string
-	CharacterLevel int
-	WeaponLevel    int
-	ArtifactLevel  []int
-	TalentLevel    [][3]int
+	Characters     [4]string
+	Weapons        [4]string
+	Artifacts      [4][5]string
+	CharacterLevel [4]int
+	WeaponLevel    [4]int
+	WeaponRefine   [4]int
+	ArtifactLevel  [4][5]int
+	ArtifactBonus  [4][attributes.EndStatType]float64
+	TalentLevel    [4][3]int
+	Constellation  [4]int
+	Element        [4]attributes.Element
 }
 
 type Char struct {
